@@ -1170,6 +1170,18 @@ typedef struct {
   uint8_t n_adj_cells;
 } neigh_cell_id_t;
 
+//shibin - structure to store the average rate until the instance per ue
+typedef struct {
+    uint16_t rnti;
+    float avg_rate;
+    float current_tti;
+}UE_AVG_INFO;
+
+// shibin this is a temporary structure to store current allocations for that ue
+typedef struct {
+    uint16_t UE_id;
+    float total_tbs_rate;
+}UE_TEMP_INFO;
 #include "proto.h"
 /*@}*/
 #endif /*__LAYER2_MAC_DEFS_H__ */
