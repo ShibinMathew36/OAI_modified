@@ -280,7 +280,7 @@ void assign_rbs_required (module_id_t Mod_id,
         LOG_I(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
 
         ach_rate[CC_id][UE_id] = ((float) TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
-        LOG_I(MAC,"[eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
+        LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
               Mod_id, frameP,UE_id, CC_id,  min_rb_unit[CC_id], nb_rbs_required[CC_id][UE_id], TBS, eNB_UE_stats[CC_id]->dlsch_mcs1);
       }
     }
@@ -572,7 +572,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
               local_stored++;
           }
       }
-      LOG_T(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
+      LOG_I(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
       //shibin - actual assignment has to take place here
       dlsch_scheduler_pre_processor_allocate (Mod_id,
                                               CC_id,
@@ -610,9 +610,11 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
   }
 
+  LOG_I(MAC,"Shibin  total stored UE is = %d ue encountered in this TTI = %d", total_ue_encountered, local_stored);
   // shibin - update the rate of UE not in the current TTI
   for (int x = 0; x<total_ue_encountered; x++) {
       ue_avg_info[x].avg_rate = (1 - 1/99)*ue_avg_info[x].avg_rate + ue_avg_info[x].current_tti;
+      LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
   }
 
 #ifdef TM5
@@ -927,7 +929,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
     unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX],
                                              int UE_id, UE_TEMP_INFO *UE_to_edit)
 {
-
+  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
   int i, temp_rb = 0;
   rnti_t rnti = UE_RNTI(Mod_id,UE_id);
   LTE_eNB_UE_stats *eNB_UE_stats = mac_xface->get_eNB_UE_stats(Mod_id,CC_id,rnti);
@@ -973,7 +975,9 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
       }// dl_pow_off[CC_id][UE_id] ! = 0
     }
   }
-  UE_to_edit->total_tbs_rate = UE_to_edit->total_tbs_rate + (mac_xface->get_TBS_DL(eNB_UE_stats->dlsch_mcs1, temp_rb)) / .001;
+  float dummy = UE_to_edit->total_tbs_rate + (mac_xface->get_TBS_DL(eNB_UE_stats->dlsch_mcs1, temp_rb)) / .001;
+  UE_to_edit->total_tbs_rate = dummy;
+  LOG_I(MAC,"Shibin  calculated value to store for UE %d = %f \n", rnti, dummy);
 }
 
 
