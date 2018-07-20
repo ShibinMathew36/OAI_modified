@@ -430,7 +430,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // loop over all active UEs
   for (i=UE_list->head; i>=0; i=UE_list->next[i]) {
-    LOG_I(MAC,"Shibin entering inside for loop \n", total_ue_count);
+    LOG_I(MAC,"Shibin entering inside for loop \n");
     rnti = UE_RNTI(Mod_id,i);
 
     if(rnti == NOT_A_RNTI)
@@ -502,7 +502,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
     }
   }
-  LOG_I(MAC,"Shibin total cc count = %d \n", temp);
+  LOG_D(MAC,"Shibin total cc count = %d \n", temp);
 
   // shibin creating a local array struct type UE_TEMP_INFO to store allocation detail
   UE_TEMP_INFO local_rb_allocations[total_ue_count];
@@ -521,7 +521,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
         index++;
       }
     }
-      LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
+      LOG_D(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
     // shibin now sort the UE in each cc based on their priority value
     for(int a = 0; a<index; a++){
       for(int b = a + 1; b<index; b++){
@@ -573,7 +573,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
               local_stored++;
           }
       }
-      LOG_I(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
+      LOG_D(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
       //shibin - actual assignment has to take place here
       dlsch_scheduler_pre_processor_allocate (Mod_id,
                                               CC_id,
@@ -757,7 +757,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
         for(j=0; j<N_RBG[CC_id]; j++) {
           //PHY_vars_eNB_g[Mod_id]->mu_mimo_mode[UE_id].rballoc_sub[i] = rballoc_sub_UE[CC_id][UE_id][i];
-          LOG_D(MAC,"RB Alloc for UE%d and Subband%d = %d\n",UE_id,j,ue_sched_ctl->rballoc_sub_UE[CC_id][j]);
+          // LOG_D(MAC,"RB Alloc for UE%d and Subband%d = %d\n",UE_id,j,ue_sched_ctl->rballoc_sub_UE[CC_id][j]);
         }
 
         //PHY_vars_eNB_g[Mod_id]->mu_mimo_mode[UE_id].pre_nb_available_rbs = pre_nb_available_rbs[CC_id][UE_id];
