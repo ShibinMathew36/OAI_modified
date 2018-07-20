@@ -502,7 +502,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
     }
   }
-  LOG_D(MAC,"Shibin total cc count = %d \n", temp);
+  LOG_I(MAC,"Shibin total cc count = %d \n", temp);
 
   // shibin creating a local array struct type UE_TEMP_INFO to store allocation detail
   UE_TEMP_INFO local_rb_allocations[total_ue_count];
@@ -521,7 +521,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
         index++;
       }
     }
-      LOG_D(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
+      LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
     // shibin now sort the UE in each cc based on their priority value
     for(int a = 0; a<index; a++){
       for(int b = a + 1; b<index; b++){
@@ -615,7 +615,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   // shibin - update the rate of UE not in the current TTI
   for (int x = 0; x<total_ue_encountered; x++) {
       ue_avg_info[x].avg_rate = (1 - 1/99)*ue_avg_info[x].avg_rate + ue_avg_info[x].current_tti;
-      LOG_D(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
+      LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
   }
 
 #ifdef TM5
