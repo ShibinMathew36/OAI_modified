@@ -182,7 +182,7 @@ void assign_rbs_required (module_id_t Mod_id,
                           float ach_rate[MAX_NUM_CCs][NUMBER_OF_UE_MAX])
 {
 
-  LOG_I(MAC,"Shibin  assign_rbs_required\n");
+  LOG_D(MAC,"Shibin  assign_rbs_required\n");
   rnti_t           rnti;
   uint16_t         TBS = 0;
   LTE_eNB_UE_stats *eNB_UE_stats[MAX_NUM_CCs];
@@ -277,7 +277,7 @@ void assign_rbs_required (module_id_t Mod_id,
           // shibin - use the TBS value calculated here for priority index calculation
         float old_rate = 1.0;   // shibin check if this value is to be initialized to something else
         for (int z = 0; z<total_ue_encountered; z++) if (ue_avg_info[z].rnti == rnti) old_rate = ue_avg_info[z].avg_rate;
-        LOG_I(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
+        LOG_D(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
 
         ach_rate[CC_id][UE_id] = ((float) TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
         LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
@@ -344,7 +344,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
                                     int           N_RBG[MAX_NUM_CCs],
                                     int           *mbsfn_flag)
 {
-  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
+  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
   unsigned char rballoc_sub[MAX_NUM_CCs][N_RBG_MAX],harq_pid=0,round=0,total_ue_count;
   unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX];
   int                     UE_id, i;
@@ -430,6 +430,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // loop over all active UEs
   for (i=UE_list->head; i>=0; i=UE_list->next[i]) {
+    LOG_I(MAC,"Shibin entering inside for loop \n", total_ue_count);
     rnti = UE_RNTI(Mod_id,i);
 
     if(rnti == NOT_A_RNTI)
@@ -614,7 +615,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   // shibin - update the rate of UE not in the current TTI
   for (int x = 0; x<total_ue_encountered; x++) {
       ue_avg_info[x].avg_rate = (1 - 1/99)*ue_avg_info[x].avg_rate + ue_avg_info[x].current_tti;
-      LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
+      LOG_D(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
   }
 
 #ifdef TM5
@@ -929,7 +930,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
     unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX],
                                              int UE_id, UE_TEMP_INFO *UE_to_edit)
 {
-  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
+  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
   int i, temp_rb = 0;
   rnti_t rnti = UE_RNTI(Mod_id,UE_id);
   LTE_eNB_UE_stats *eNB_UE_stats = mac_xface->get_eNB_UE_stats(Mod_id,CC_id,rnti);
@@ -977,7 +978,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
   }
   float dummy = UE_to_edit->total_tbs_rate + (mac_xface->get_TBS_DL(eNB_UE_stats->dlsch_mcs1, temp_rb)) / .001;
   UE_to_edit->total_tbs_rate = dummy;
-  LOG_I(MAC,"Shibin  calculated value to store for UE %d = %f \n", rnti, dummy);
+  LOG_D(MAC,"Shibin  calculated value to store for UE %d = %f \n", rnti, dummy);
 }
 
 
