@@ -243,7 +243,7 @@ void assign_rbs_required (module_id_t Mod_id,
      */
     //    if (UE_list->UE_template[UE_id]->dl_buffer_total> 0) {
     if (UE_list->UE_template[pCCid][UE_id].dl_buffer_total> 0) {
-      LOG_I(MAC,"[preprocessor] assign RB for UE %d\n",UE_id);
+      LOG_D(MAC,"[preprocessor] assign RB for UE %d\n",UE_id);
 
       for (i=0; i<UE_list->numactiveCCs[UE_id]; i++) {
         CC_id = UE_list->ordered_CCids[i][UE_id];
@@ -467,7 +467,9 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
     }
   }
-  LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
+  int bugger = 0;
+  if (total_ue_count != 0) bugger = 1;
+  if (bugger) LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
 
   // shibin below code to get all active cc across all UE
   uint8_t valid_CCs[MAX_NUM_CCs];
@@ -477,7 +479,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       UE_id = i;
 
       for (ii = 0; ii < UE_num_active_CC(UE_list, UE_id); ii++) {
-        LOG_I(MAC,"Shibin number of active cc existing = %d\n", UE_num_active_CC(UE_list, UE_id));
+        if (bugger) LOG_I(MAC,"Shibin number of active cc existing = %d\n", UE_num_active_CC(UE_list, UE_id));
         CC_id = UE_list->ordered_CCids[ii][UE_id];
         ue_sched_ctl = &UE_list->UE_sched_ctrl[UE_id];
         harq_pid = ue_sched_ctl->harq_pid[CC_id];
@@ -487,22 +489,22 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
         // LOG_D(MAC,"UE %d rnti 0x\n", UE_id, rnti );
         if (rnti == NOT_A_RNTI) {
-            LOG_I(MAC, "Shibin caught invalid RNTI\n");
+            if (bugger) LOG_I(MAC, "Shibin caught invalid RNTI\n");
             continue;
         }
         if (UE_list->UE_sched_ctrl[UE_id].ul_out_of_sync == 1) {
-            LOG_I(MAC,"Shibin UE out of synch\n");
+            if (bugger) LOG_I(MAC,"Shibin UE out of synch\n");
             continue;
         }
         if (!phy_stats_exist(Mod_id, rnti)){
-            LOG_I(MAC,"Shibin phy status not existing\n");
+            if (bugger) LOG_I(MAC,"Shibin phy status not existing\n");
             continue;
         }
 
         for(int z = 0; z< temp; z++){
           if (valid_CCs[z] == CC_id) break;
           else{
-            LOG_I(MAC,"Shibin found new CC\n");
+            if (bugger) LOG_I(MAC,"Shibin found new CC\n");
             valid_CCs[temp] = CC_id;
             temp++;
           }
