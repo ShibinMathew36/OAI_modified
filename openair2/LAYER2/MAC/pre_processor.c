@@ -280,8 +280,8 @@ void assign_rbs_required (module_id_t Mod_id,
         LOG_D(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
 
         ach_rate[CC_id][UE_id] = ((float) TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
-        LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
-              Mod_id, frameP,UE_id, CC_id,  min_rb_unit[CC_id], nb_rbs_required[CC_id][UE_id], TBS, eNB_UE_stats[CC_id]->dlsch_mcs1);
+        //LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
+              //Mod_id, frameP,UE_id, CC_id,  min_rb_unit[CC_id], nb_rbs_required[CC_id][UE_id], TBS, eNB_UE_stats[CC_id]->dlsch_mcs1);
       }
     }
   }
@@ -430,7 +430,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // loop over all active UEs
   for (i=UE_list->head; i>=0; i=UE_list->next[i]) {
-    LOG_I(MAC,"Shibin entering inside for loop \n");
+    //LOG_I(MAC,"Shibin entering inside for loop \n");
     rnti = UE_RNTI(Mod_id,i);
 
     if(rnti == NOT_A_RNTI)
@@ -477,6 +477,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       UE_id = i;
 
       for (ii = 0; ii < UE_num_active_CC(UE_list, UE_id); ii++) {
+        LOG_I(MAC,"Shibin number of active cc existing = %d\n", UE_num_active_CC(UE_list, UE_id));
         CC_id = UE_list->ordered_CCids[ii][UE_id];
         ue_sched_ctl = &UE_list->UE_sched_ctrl[UE_id];
         harq_pid = ue_sched_ctl->harq_pid[CC_id];
@@ -485,16 +486,23 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
         rnti = UE_RNTI(Mod_id, UE_id);
 
         // LOG_D(MAC,"UE %d rnti 0x\n", UE_id, rnti );
-        if (rnti == NOT_A_RNTI)
-          continue;
-        if (UE_list->UE_sched_ctrl[UE_id].ul_out_of_sync == 1)
-          continue;
-        if (!phy_stats_exist(Mod_id, rnti))
-          continue;
+        if (rnti == NOT_A_RNTI) {
+            LOG_I(MAC, "Shibin caught invalid RNTI\n");
+            continue;
+        }
+        if (UE_list->UE_sched_ctrl[UE_id].ul_out_of_sync == 1) {
+            LOG_I(MAC,"Shibin UE out of synch\n");
+            continue;
+        }
+        if (!phy_stats_exist(Mod_id, rnti)){
+            LOG_I(MAC,"Shibin phy status not existing\n");
+            continue;
+        }
 
         for(int z = 0; z< temp; z++){
           if (valid_CCs[z] == CC_id) break;
           else{
+            LOG_I(MAC,"Shibin found new CC\n");
             valid_CCs[temp] = CC_id;
             temp++;
           }
@@ -502,7 +510,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
     }
   }
-  LOG_I(MAC,"Shibin total cc count = %d \n", temp);
+
 
   // shibin creating a local array struct type UE_TEMP_INFO to store allocation detail
   UE_TEMP_INFO local_rb_allocations[total_ue_count];
@@ -521,7 +529,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
         index++;
       }
     }
-      LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
+      //LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
     // shibin now sort the UE in each cc based on their priority value
     for(int a = 0; a<index; a++){
       for(int b = a + 1; b<index; b++){
@@ -611,11 +619,11 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
   }
 
-  LOG_I(MAC,"Shibin  total stored UE is = %d ue encountered in this TTI = %d", total_ue_encountered, local_stored);
+  //LOG_I(MAC,"Shibin  total stored UE is = %d ue encountered in this TTI = %d", total_ue_encountered, local_stored);
   // shibin - update the rate of UE not in the current TTI
   for (int x = 0; x<total_ue_encountered; x++) {
       ue_avg_info[x].avg_rate = (1 - 1/99)*ue_avg_info[x].avg_rate + ue_avg_info[x].current_tti;
-      LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
+      //LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
   }
 
 #ifdef TM5
