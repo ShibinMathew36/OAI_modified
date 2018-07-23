@@ -344,7 +344,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
                                     int           N_RBG[MAX_NUM_CCs],
                                     int           *mbsfn_flag)
 {
-  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
+  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
   unsigned char rballoc_sub[MAX_NUM_CCs][N_RBG_MAX],harq_pid=0,round=0,total_ue_count;
   unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX];
   int                     UE_id, i;
@@ -591,7 +591,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
               local_stored++;
           }
       }
-      LOG_D(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
+      if (bugger)  LOG_D(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
       //shibin - actual assignment has to take place here
       dlsch_scheduler_pre_processor_allocate (Mod_id,
                                               CC_id,
@@ -629,11 +629,11 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       }
   }
 
-  //LOG_I(MAC,"Shibin  total stored UE is = %d ue encountered in this TTI = %d", total_ue_encountered, local_stored);
+  if (bugger) LOG_I(MAC,"Shibin  total stored UE is = %d ue encountered in this TTI = %d", total_ue_encountered, local_stored);
   // shibin - update the rate of UE not in the current TTI
   for (int x = 0; x<total_ue_encountered; x++) {
       ue_avg_info[x].avg_rate = (1 - 1/99)*ue_avg_info[x].avg_rate + ue_avg_info[x].current_tti;
-      //LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
+      if (bugger) LOG_I(MAC,"Shibin  tfinal stored values UE ID = %d and avg rate = %f", ue_avg_info[x].rnti, ue_avg_info[x].avg_rate);
   }
 
 #ifdef TM5
