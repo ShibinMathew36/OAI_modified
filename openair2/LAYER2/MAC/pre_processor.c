@@ -182,7 +182,7 @@ void assign_rbs_required (module_id_t Mod_id,
                           float ach_rate[MAX_NUM_CCs][NUMBER_OF_UE_MAX])
 {
 
-  LOG_D(MAC,"Shibin  assign_rbs_required\n");
+  LOG_I(MAC,"Shibin  assign_rbs_required\n");
   rnti_t           rnti;
   uint16_t         TBS = 0;
   LTE_eNB_UE_stats *eNB_UE_stats[MAX_NUM_CCs];
@@ -258,7 +258,7 @@ void assign_rbs_required (module_id_t Mod_id,
 
         TBS = mac_xface->get_TBS_DL(eNB_UE_stats[CC_id]->dlsch_mcs1,nb_rbs_required[CC_id][UE_id]);
 
-        LOG_D(MAC,"[preprocessor] start RB assignement for UE %d CC_id %d dl buffer %d (RB unit %d, MCS %d, TBS %d) \n",
+        LOG_I(MAC,"[preprocessor] start RB assignement for UE %d CC_id %d dl buffer %d (RB unit %d, MCS %d, TBS %d) \n",
               UE_id, CC_id, UE_list->UE_template[pCCid][UE_id].dl_buffer_total,
               nb_rbs_required[CC_id][UE_id],eNB_UE_stats[CC_id]->dlsch_mcs1,TBS);
 
@@ -277,7 +277,7 @@ void assign_rbs_required (module_id_t Mod_id,
           // shibin - use the TBS value calculated here for priority index calculation
         float old_rate = 1.0;   // shibin check if this value is to be initialized to something else
         for (int z = 0; z<total_ue_encountered; z++) if (ue_avg_info[z].rnti == rnti) old_rate = ue_avg_info[z].avg_rate;
-        LOG_D(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
+        LOG_I(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
 
         ach_rate[CC_id][UE_id] = ((float) TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
         //LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
@@ -344,7 +344,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
                                     int           N_RBG[MAX_NUM_CCs],
                                     int           *mbsfn_flag)
 {
-  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
+  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
   unsigned char rballoc_sub[MAX_NUM_CCs][N_RBG_MAX],harq_pid=0,round=0,total_ue_count;
   unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX];
   int                     UE_id, i;
@@ -390,7 +390,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
     for (i = 0; i < NUMBER_OF_UE_MAX; i++) {
       if (UE_list->active[i] != TRUE) continue;
-
+        LOG_I(MAC,"Shibin found active UE\n");
       UE_id = i;
       // Initialize scheduling information for all active UEs
 
@@ -413,14 +413,14 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // Store the DLSCH buffer for each logical channel
   store_dlsch_buffer (Mod_id,frameP,subframeP);
+  LOG_I(MAC,"Shibin after store_dlsch_buffer\n");
 
 
-
-  // Calculate the number of RBs required by each UE on the basis of logical channel's buffer
+    // Calculate the number of RBs required by each UE on the basis of logical channel's buffer
   assign_rbs_required (Mod_id,frameP,subframeP,nb_rbs_required,min_rb_unit, ach_rate);
 
 
-
+    LOG_I(MAC,"Shibin after assign_rbs_required\n");
   // Sorts the user on the basis of dlsch logical channel buffer and CQI
   //sort_UEs (Mod_id,frameP,subframeP);
 
