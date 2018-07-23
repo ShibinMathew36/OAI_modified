@@ -344,7 +344,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
                                     int           N_RBG[MAX_NUM_CCs],
                                     int           *mbsfn_flag)
 {
-  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
+  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
   unsigned char rballoc_sub[MAX_NUM_CCs][N_RBG_MAX],harq_pid=0,round=0,total_ue_count;
   unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX];
   int                     UE_id, i;
@@ -433,15 +433,22 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
     //LOG_I(MAC,"Shibin entering inside for loop \n");
     rnti = UE_RNTI(Mod_id,i);
 
-    if(rnti == NOT_A_RNTI)
-      continue;
-    if (UE_list->UE_sched_ctrl[i].ul_out_of_sync == 1)
-      continue;
-    if (!phy_stats_exist(Mod_id, rnti))
-      continue;
+    if(rnti == NOT_A_RNTI){
+        LOG_I(MAC,"Shibin  NOT_A_RNTI\n");
+        continue;
+    }
+    if (UE_list->UE_sched_ctrl[i].ul_out_of_sync == 1){
+        LOG_I(MAC,"Shibin UR out of sync \n");
+        continue;
+    }
+    if (!phy_stats_exist(Mod_id, rnti)){
+        LOG_I(MAC,"Shibin phy_stats_ doesnt exist \n");
+        continue;
+    }
     UE_id = i;
 
     for (ii=0; ii<UE_num_active_CC(UE_list,UE_id); ii++) {
+      LOG_I(MAC,"Shibin inside for loop \n");
       CC_id = UE_list->ordered_CCids[ii][UE_id];
       ue_sched_ctl = &UE_list->UE_sched_ctrl[UE_id];
       harq_pid = ue_sched_ctl->harq_pid[CC_id];
@@ -464,6 +471,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
       //nb_rbs_required_remaining[UE_id] = nb_rbs_required[UE_id];
       if (nb_rbs_required[CC_id][UE_id] > 0) {
         total_ue_count = total_ue_count + 1;
+          LOG_I(MAC,"Shibin inside nb_rbs_required[CC_id][UE_id] > 0\n");
       }
     }
   }
@@ -940,7 +948,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
     unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX],
                                              int UE_id, UE_TEMP_INFO *UE_to_edit)
 {
-  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
+  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
   int i, temp_rb = 0;
   rnti_t rnti = UE_RNTI(Mod_id,UE_id);
   LTE_eNB_UE_stats *eNB_UE_stats = mac_xface->get_eNB_UE_stats(Mod_id,CC_id,rnti);
