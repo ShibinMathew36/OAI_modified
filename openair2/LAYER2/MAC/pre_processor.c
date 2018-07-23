@@ -59,7 +59,7 @@
 
 //shibin- storing the average throughput per ue across sessions
 uint16_t local_rnti[5] = {0, 0, 0, 0, 0};
-float avg_rate[5] = {-1.0, -1.0, -1.0, -1.0, -1.0};
+//float avg_rate[5] = {-1.0, -1.0, -1.0, -1.0, -1.0};
 UE_AVG_INFO ue_avg_info[5];
 int total_ue_encountered = 0;
 
@@ -533,7 +533,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
     memset(UE_per_cc, -1, sizeof(UE_per_cc[0]) * 5);
     memset(priority_index, -1.0, sizeof(priority_index[0]) * 5);
     for (int z =0; z < NUMBER_OF_UE_MAX; z++){
-      if (ach_rate[valid_CCs[i]][z] != -1){
+      if ((float)ach_rate[valid_CCs[i]][z] != (float)-1.0){
         priority_index[index] = ach_rate[valid_CCs[i]][z];
         UE_per_cc[index] = z;
         index++;
@@ -625,7 +625,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
           ue_avg_info[x].current_tti = (1/99)*local_rb_allocations[z].total_tbs_rate;
           temp_avg_info.avg_rate = 0.0;
           ue_avg_info[x] = temp_avg_info;
-          total_ue_encountered++;
+          total_ue_encountered += 1;
       }
   }
 
