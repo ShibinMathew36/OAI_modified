@@ -565,27 +565,20 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
         continue;
 
       transmission_mode = mac_xface->get_transmission_mode(Mod_id,CC_id,rnti);
-      //          mac_xface->get_ue_active_harq_pid(Mod_id,CC_id,rnti,frameP,subframeP,&harq_pid,&round,0);
-      //rrc_status = mac_eNB_get_rrc_status(Mod_id,rnti);
-      // 1st allocate for the retx
-
-      // retransmission in data channels
-      // control channel in the 1st transmission
-      // data channel for all TM
 
       // shibin - code to generate pointer to stored total rb allocations to that UE
       UE_TEMP_INFO *UE_to_edit;
-      for(int z =0; z<local_stored; z++){
-          if (UE_id == local_rb_allocations[z].UE_id){
-              UE_to_edit = &local_rb_allocations[z];
-          }else {
-              UE_TEMP_INFO temp_struct;
-              temp_struct.UE_id = UE_id;
-              temp_struct.total_tbs_rate = 0.0;
-              local_rb_allocations[local_stored] = temp_struct;
-              UE_to_edit = &local_rb_allocations[local_stored];
-              local_stored++;
-          }
+      int z =0;
+      for(; z < local_stored; z++)
+          if (UE_id == local_rb_allocations[z].UE_id) UE_to_edit = &local_rb_allocations[z];
+
+      if (z == local_stored){
+          UE_TEMP_INFO temp_struct;
+          temp_struct.UE_id = UE_id;
+          temp_struct.total_tbs_rate = 0.0;
+          local_rb_allocations[local_stored] = temp_struct;
+          UE_to_edit = &local_rb_allocations[local_stored];
+          local_stored += 1;
       }
       if (bugger)  LOG_D(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
       //shibin - actual assignment has to take place here
