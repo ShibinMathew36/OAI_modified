@@ -508,20 +508,16 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
             if (bugger) LOG_I(MAC,"Shibin phy status not existing\n");
             continue;
         }
-
-        for(int z = 0; z< temp; z++){
-          if (valid_CCs[z] == CC_id) break;
-          else{
-            if (bugger) LOG_I(MAC,"Shibin found new CC\n");
+        int z = 0;
+        for(; z < temp; z++) if (valid_CCs[z] == CC_id) break;
+        if (z == temp){
             valid_CCs[temp] = CC_id;
-            temp++;
-          }
+            temp += 1;
         }
       }
     }
   }
-
-
+  
   // shibin creating a local array struct type UE_TEMP_INFO to store allocation detail
   UE_TEMP_INFO local_rb_allocations[total_ue_count];
   int local_stored = 0; // to keep track of number of local objects created
