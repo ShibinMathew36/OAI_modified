@@ -420,7 +420,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   assign_rbs_required (Mod_id,frameP,subframeP,nb_rbs_required,min_rb_unit, ach_rate);
 
 
-    LOG_D(MAC,"Shibin after assign_rbs_required\n");
+    LOG_I(MAC,"Shibin after assign_rbs_required\n");
   // Sorts the user on the basis of dlsch logical channel buffer and CQI
   //sort_UEs (Mod_id,frameP,subframeP);
 
@@ -430,7 +430,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // loop over all active UEs
   for (i=UE_list->head; i>=0; i=UE_list->next[i]) {
-    //LOG_I(MAC,"Shibin entering inside for loop \n");
+    LOG_I(MAC,"Shibin entering inside for loop \n");
     rnti = UE_RNTI(Mod_id,i);
 
     if(rnti == NOT_A_RNTI){
