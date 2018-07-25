@@ -344,7 +344,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
                                     int           N_RBG[MAX_NUM_CCs],
                                     int           *mbsfn_flag)
 {
-  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
+  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor \n");
   unsigned char rballoc_sub[MAX_NUM_CCs][N_RBG_MAX],harq_pid=0,round=0,total_ue_count;
   unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX];
   int                     UE_id, i;
@@ -413,14 +413,14 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // Store the DLSCH buffer for each logical channel
   store_dlsch_buffer (Mod_id,frameP,subframeP);
-  LOG_I(MAC,"Shibin after store_dlsch_buffer\n");
+  LOG_D(MAC,"Shibin after store_dlsch_buffer\n");
 
 
     // Calculate the number of RBs required by each UE on the basis of logical channel's buffer
   assign_rbs_required (Mod_id,frameP,subframeP,nb_rbs_required,min_rb_unit, ach_rate);
 
 
-    LOG_I(MAC,"Shibin after assign_rbs_required\n");
+    LOG_D(MAC,"Shibin after assign_rbs_required\n");
   // Sorts the user on the basis of dlsch logical channel buffer and CQI
   //sort_UEs (Mod_id,frameP,subframeP);
 
@@ -580,7 +580,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
           UE_to_edit = &local_rb_allocations[local_stored];
           local_stored += 1;
       }
-      if (bugger)  LOG_D(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
+      if (bugger)  LOG_I(MAC,"calling dlsch_scheduler_pre_processor_allocate .. \n ");
       //shibin - actual assignment has to take place here
       dlsch_scheduler_pre_processor_allocate (Mod_id,
                                               CC_id,
@@ -937,7 +937,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
     unsigned char MIMO_mode_indicator[MAX_NUM_CCs][N_RBG_MAX],
                                              int UE_id, UE_TEMP_INFO *UE_to_edit)
 {
-  LOG_I(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
+  LOG_D(MAC,"Shibin inside dlsch_scheduler_pre_processor_allocate \n");
   int i, temp_rb = 0;
   rnti_t rnti = UE_RNTI(Mod_id,UE_id);
   LTE_eNB_UE_stats *eNB_UE_stats = mac_xface->get_eNB_UE_stats(Mod_id,CC_id,rnti);
@@ -985,7 +985,7 @@ void dlsch_scheduler_pre_processor_allocate (module_id_t   Mod_id,
   }
   float dummy = UE_to_edit->total_tbs_rate + (mac_xface->get_TBS_DL(eNB_UE_stats->dlsch_mcs1, temp_rb)) / .001;
   UE_to_edit->total_tbs_rate = dummy;
-  LOG_D(MAC,"Shibin  calculated value to store for UE %d = %f \n", rnti, dummy);
+  LOG_I(MAC,"Shibin  calculated value to store for UE %d = %f \n", rnti, dummy);
 }
 
 
