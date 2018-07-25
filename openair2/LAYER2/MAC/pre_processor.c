@@ -182,7 +182,7 @@ void assign_rbs_required (module_id_t Mod_id,
                           float ach_rate[MAX_NUM_CCs][NUMBER_OF_UE_MAX])
 {
 
-  LOG_I(MAC,"Shibin  assign_rbs_required\n");
+  LOG_D(MAC,"Shibin  assign_rbs_required\n");
   rnti_t           rnti;
   uint16_t         TBS = 0;
   LTE_eNB_UE_stats *eNB_UE_stats[MAX_NUM_CCs];
