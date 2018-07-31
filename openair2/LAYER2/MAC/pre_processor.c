@@ -279,7 +279,7 @@ void assign_rbs_required (module_id_t Mod_id,
         for (int z = 0; z<total_ue_encountered; z++) if (ue_avg_info[z].rnti == rnti) old_rate = ue_avg_info[z].avg_rate;
         LOG_I(MAC,"Shibin calculated avg rate for ue %d is %f \n", UE_id, old_rate);
 
-        ach_rate[CC_id][UE_id] = ((float) TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
+        ach_rate[CC_id][UE_id] = ((float)TBS/.001)/old_rate;  // is the right way as old rate involves all cc and here numerator is just one cc
         //LOG_I(MAC,"Shibin [eNB %d] Frame %d: UE %d on CC %d: RB unit %d,  nb_required RB %d (TBS %d, mcs %d)\n",
               //Mod_id, frameP,UE_id, CC_id,  min_rb_unit[CC_id], nb_rbs_required[CC_id][UE_id], TBS, eNB_UE_stats[CC_id]->dlsch_mcs1);
       }
@@ -361,7 +361,9 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // shibin this stores the achievable rate (TBS/tti) in the order of ue per cc
   float ach_rate[MAX_NUM_CCs][NUMBER_OF_UE_MAX];
-  memset(ach_rate, -1.0, sizeof(ach_rate[0][0]) * MAX_NUM_CCs * NUMBER_OF_UE_MAX);
+  for(int m =0; m < MAX_NUM_CCs; m++)
+      for(int n =0; n < NUMBER_OF_UE_MAX; n++)
+          ach_rate[m][n] = -1.0;
 
   int transmission_mode = 0;
   UE_sched_ctrl *ue_sched_ctl;
@@ -390,7 +392,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
     for (i = 0; i < NUMBER_OF_UE_MAX; i++) {
       if (UE_list->active[i] != TRUE) continue;
-        LOG_I(MAC,"Shibin found active UE\n");
+        LOG_D(MAC,"Shibin found active UE\n");
       UE_id = i;
       // Initialize scheduling information for all active UEs
 
@@ -420,7 +422,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   assign_rbs_required (Mod_id,frameP,subframeP,nb_rbs_required,min_rb_unit, ach_rate);
 
 
-    LOG_I(MAC,"Shibin after assign_rbs_required\n");
+  //LOG_I(MAC,"Shibin after assign_rbs_required\n");
   // Sorts the user on the basis of dlsch logical channel buffer and CQI
   //sort_UEs (Mod_id,frameP,subframeP);
 
@@ -430,25 +432,25 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
 
   // loop over all active UEs
   for (i=UE_list->head; i>=0; i=UE_list->next[i]) {
-    LOG_I(MAC,"Shibin entering inside for loop \n");
+    LOG_D(MAC,"Shibin entering inside for loop \n");
     rnti = UE_RNTI(Mod_id,i);
 
     if(rnti == NOT_A_RNTI){
-        LOG_I(MAC,"Shibin  NOT_A_RNTI\n");
+        LOG_D(MAC,"Shibin  NOT_A_RNTI\n");
         continue;
     }
     if (UE_list->UE_sched_ctrl[i].ul_out_of_sync == 1){
-        LOG_I(MAC,"Shibin UR out of sync \n");
+        LOG_D(MAC,"Shibin UR out of sync \n");
         continue;
     }
     if (!phy_stats_exist(Mod_id, rnti)){
-        LOG_I(MAC,"Shibin phy_stats_ doesnt exist \n");
+        LOG_D(MAC,"Shibin phy_stats_ doesnt exist \n");
         continue;
     }
     UE_id = i;
 
     for (ii=0; ii<UE_num_active_CC(UE_list,UE_id); ii++) {
-      LOG_I(MAC,"Shibin inside for loop \n");
+      LOG_D(MAC,"Shibin inside for loop \n");
       CC_id = UE_list->ordered_CCids[ii][UE_id];
       ue_sched_ctl = &UE_list->UE_sched_ctrl[UE_id];
       harq_pid = ue_sched_ctl->harq_pid[CC_id];
@@ -477,7 +479,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   }
   int bugger = 0;
   if (total_ue_count != 0) bugger = 1;
-  if (bugger) LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
+  LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
 
   // shibin below code to get all active cc across all UE
   uint8_t valid_CCs[MAX_NUM_CCs];
@@ -526,16 +528,16 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
     int index = 0;
     int UE_per_cc[5];
     float priority_index[5];
-    memset(UE_per_cc, -1, sizeof(UE_per_cc[0]) * 5);
-    memset(priority_index, -1.0, sizeof(priority_index[0]) * 5);
+    for(int dummy = 0; dummy < 5; dummy++) UE_per_cc[dummy] = -1;
+    for(int dummy = 0; dummy < 5; dummy++) priority_index[dummy] = -1.0;
     for (int z =0; z < NUMBER_OF_UE_MAX; z++){
-      if ((float)ach_rate[valid_CCs[i]][z] != (float)-1.0){
+      if (ach_rate[valid_CCs[i]][z] != -1.0){
         priority_index[index] = ach_rate[valid_CCs[i]][z];
         UE_per_cc[index] = z;
         index++;
       }
     }
-      //LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
+    LOG_I(MAC,"Shibin total UE for cc %d is = %d \n", i, index);
     // shibin now sort the UE in each cc based on their priority value
     for(int a = 0; a<index; a++){
       for(int b = a + 1; b<index; b++){
