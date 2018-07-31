@@ -479,7 +479,7 @@ void dlsch_scheduler_pre_processor (module_id_t   Mod_id,
   }
   int bugger = 0;
   if (total_ue_count != 0) bugger = 1;
-  LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
+  if (bugger) LOG_I(MAC,"Shibin total ue count = %d \n", total_ue_count);
 
   // shibin below code to get all active cc across all UE
   uint8_t valid_CCs[MAX_NUM_CCs];
